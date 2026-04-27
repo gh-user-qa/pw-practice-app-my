@@ -149,11 +149,37 @@ test('web tables', async({page}) => {
         for (let row of await ageRows.all()) {
             const cellValue = await row.locator('td').last().textContent()
 
-            if (age == "200"){
+            if (age == "200") {
                 expect(await page.getByRole('table').textContent()).toContain('No data found')
             } else {
                 expect(cellValue).toEqual(age)
             }
         }
     }
+})
+
+test('datepicker', async({page}) => {
+    await page.getByText('Forms').click()
+    await page.getByText('Datepicker').click()
+
+    const calendarInputField = page.getByPlaceholder('Form Picker')
+    await calendarInputField.click()
+
+    let date = new Date()
+    date.setDate(date.getDate() + 7)
+    const expectedDate = date.getDate().toString()
+    const expectedMonthShort = date.toLocaleString('En-US', {month: 'short'})
+    const expectedMonthLong = date.toLocaleString('En-US', {month: 'long'})
+    const expectedYear = date.getFullYear()
+    const dateToAssert = `${expectedMonthShort} ${expectedDate}, ${expectedYear}`
+
+    let calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    const expectedMonthAndYear = `${expectedMonthLong} ${expectedYear}`
+    while(!calendarMonthAndYear.includes(expectedMonthAndYear)){
+        await page.locator('nb-calendar-pageable-navigation [data-name="chevron-right"]').click()
+        calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    }
+
+    await page.locator('[class="day-cell ng-star-inserted"]').getByText(expectedDate, {exact: true}).click()
+    await expect(calendarInputField).toHaveValue(dateToAssert)
 })
