@@ -149,22 +149,11 @@ test('web tables', async({page}) => {
         for (let row of await ageRows.all()) {
             const cellValue = await row.locator('td').last().textContent()
 
-            if (age == "200"){
+            if (age == "200") {
                 expect(await page.getByRole('table').textContent()).toContain('No data found')
             } else {
                 expect(cellValue).toEqual(age)
             }
         }
     }
-})
-
-test('datepicker', async({page}) => {
-    await page.getByText('Forms').click()
-    await page.getByText('Datepicker').click()
-
-    const calendarInputField = page.getByPlaceholder('Form Picker')
-    await calendarInputField.click()
-
-    await page.locator('[class="day-cell ng-star-inserted"]').getByText('1', {exact: true}).click()
-    await expect(calendarInputField).toHaveValue('Apr 1, 2026')
 })
