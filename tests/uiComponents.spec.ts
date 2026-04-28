@@ -175,7 +175,7 @@ test('datepicker', async({page}) => {
 
     let calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
     const expectedMonthAndYear = `${expectedMonthLong} ${expectedYear}`
-    while(!calendarMonthAndYear.includes(expectedMonthAndYear)){
+    while(!calendarMonthAndYear?.includes(expectedMonthAndYear)){
         await page.locator('nb-calendar-pageable-navigation [data-name="chevron-right"]').click()
         calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
     }
